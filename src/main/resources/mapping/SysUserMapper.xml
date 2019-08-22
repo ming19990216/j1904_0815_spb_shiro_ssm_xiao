@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--mapping 映射规范
+    1、mapper.namespace书写;
+    2、resultMap作用
+    3、sql指令 参数(id,parameterMap/type,resultMap/type)
+-->
+<mapper namespace="com.qf.j1904.mapper.SysUserMapper">
+    <resultMap id="sysUser" type="com.qf.j1904.pojo.SysUser">
+        <id property="userId" column="USERID"/>
+        <result property="loginName" column="loginName"/>
+        <result property="password" column="password"/>
+        <result property="state" column="state"/>
+        <result property="createTime" column="createTime"/>
+        <result property="realname" column="realname"/>
+    </resultMap>
+    <sql id="sysUser_colums">
+        userId,
+        loginName,
+        password,
+        state,
+        createTime,
+        realname
+    </sql>
+    <select id="findUserInfoByLoginName" parameterType="string" resultMap="sysUser">
+        select
+        <include refid="sysUser_colums"/>
+        from
+        tb_sys_user u
+        where
+        u.loginName=#{loginName}
+    </select>
+    <select id="findPermissionByUserName" parameterType="string" resultType="com.qf.j1904.pojo.SysPermission">
+        select p.*
+        from
+        tb_sys_user        u,
+        tb_sys_role        r,
+        tb_sys_permission  p,
+        tb_user_role       ur,
+        tb_role_permission rp
+        where
+        u.userid=ur.user_id
+        and ur.role_id=r.role_id
+        and r.role_id=rp.role_id
+        and rp.permission_id=p.permission_id
+        and u.loginName=#{loginName}
+    </select>
+</mapper>
